@@ -21,7 +21,6 @@ const ChangePassword = () => {
         setTimeout(() => {
             setMessage('Password changed successfully!');
             setError('');
-            setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         }, 1000);
