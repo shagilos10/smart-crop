@@ -4,10 +4,47 @@ import image1 from '/src/assets/images/image1.png'
 import image2 from '/src/assets/images/image2.png'
 import image3 from '/src/assets/images/image3.png'
 import image4 from '/src/assets/images/image4.png'
+import image5 from '/src/assets/images/image5.png'
+import image6 from '/src/assets/images/image6.png'
+import image7 from '/src/assets/images/image7.png'
+import image8 from '/src/assets/images/image8.png'
+import Map from '../components/Map'
+import Contactus from '../components/Contactus'
+import Footer from '../components/Footer'
+import { Navigate, useNavigate } from 'react-router-dom'
+
+const servicesData = [
+    { 
+        title: "Precision Field Management", 
+        image: image5, 
+        description: "Optimize your field operations with precision farming techniques."
+    },
+    { 
+        title: "Soil Health Monitoring", 
+        image: image6, 
+        description: "Keep track of soil health with our advanced monitoring solutions."
+    },
+    { 
+        title: "Irrigation Management", 
+        image: image7, 
+        description: "Maximize your water usage with efficient irrigation systems."
+    },
+    { 
+        title: "Crop Health Monitoring", 
+        image: image8, 
+        description: "Monitor crop health in real-time to ensure optimal growth."
+    },
+];
+
 
 const Landingpage = () => {
+    const navigate=useNavigate()
+    function HandleClick(){
+        navigate('/dashboard')
+    
+    }
   return (
-    <div>
+    <div className='bg-gray-100'>
         <nav className='flex justify-between items-center p-8 '>
             <div className='flex items-center'>
                 <img className='w-18 ' src={logo} alt="logo" />
@@ -28,7 +65,7 @@ const Landingpage = () => {
                 <p className='text-xl py-10'> Elevate your farming game with our smart tools designed to <br /> transform your crop management
                 like <br /> never before!</p>
                 <button
-                 type="submit"
+                 type="submit" onClick={HandleClick}
                   className="w-40 py-2 mt-4 text-white bg-green-700 rounded-md hover:bg-green-800 focus:outline-none focus:ring focus:ring-green-300"
                 >
                   Get Started
@@ -60,8 +97,8 @@ const Landingpage = () => {
             </div>
 
         </section>
-        <h1 className='font-bold text-5xl text-center py-10'> About Us</h1>
-        <section className='flex justify-between' id='about'>
+        <h1 className='font-bold text-2xl text-center py-10'> About Us</h1>
+        <section className='flex justify-between bg-' id='about'>
 
             <div className='px-12 p-4'>
                 <h1 className='font-lightbold text-3xl'>Empowering Ethiopian  <br />Agriculture with technology</h1><br /><br />
@@ -82,6 +119,28 @@ combining cutting-edge technology <br />with deep-rooted agricultural knowledge 
 
             </div>
 
+        </section>
+
+        <section className="p-6 py-20 bg-gray-100" id="services">
+            <h2 className="text-2xl font-bold text-center mb-4">Our Services</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {servicesData.map((service, index) => (
+                    <div key={index} className="bg-white p-2  rounded-4xl shadow-md transition-transform transform hover:scale-105">
+                        <img src={service.image} alt={service.title} className="w-full h-48 object-cover rounded-4xl" />
+                        <h3 className="text-lg font-semibold mt-2 ">{service.title}</h3>
+                        <p className="text-gray-700">{service.description}</p>
+                    </div>
+                ))}
+            </div>
+        </section>
+
+        <section>
+        <div className="p-6">
+                <h2 className="text-2xl font-bold text-center mb-4">Our Location</h2>
+                <Map />
+            </div>
+            <Contactus/>
+            <Footer/>
         </section>
       
     </div>
