@@ -1,8 +1,8 @@
-// src/ForgotPassword.js
+// src/OtpVerification.js
 import React, { useState } from 'react';
 
-const ForgotPass = () => {
-    const [email, setEmail] = useState('');
+const OtpVerification = () => {
+    const [otp, setOtp] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
@@ -10,30 +10,34 @@ const ForgotPass = () => {
         e.preventDefault();
 
         // Basic validation
-        if (!email) {
-            setError('Please enter your email address.');
+        if (!otp) {
+            setError('Please enter the OTP.');
             return;
         }
 
-        // Simulate sending the reset link
-        // Replace this with your API call to send the OTP
-        setTimeout(() => {
-            setMessage('A password reset link has been sent to your email address.');
-            setEmail('');
+        // Simulate OTP verification
+        // Replace this with your API call to verify the OTP
+        const validOtp = "123456"; // Example valid OTP for simulation
+        if (otp === validOtp) {
+            setMessage('OTP verified successfully!');
             setError('');
-        }, 1000);
+            // Proceed to the next step (e.g., redirect to reset password page)
+        } else {
+            setError('Invalid OTP. Please try again.');
+            setMessage('');
+        }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-md shadow-md w-96">
-                <h2 className="text-xl font-bold text-center mb-4">Forgot Password?</h2>
+                <h2 className="text-xl font-bold text-center mb-4">OTP Verification</h2>
                 <form onSubmit={handleSubmit}>
                     <input 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        placeholder="Enter your email address" 
+                        type="text" 
+                        value={otp} 
+                        onChange={(e) => setOtp(e.target.value)} 
+                        placeholder="Enter your OTP" 
                         className="w-full p-2 border border-gray-300 rounded-md mb-4" 
                         required 
                     />
@@ -41,7 +45,7 @@ const ForgotPass = () => {
                         type="submit" 
                         className="w-full bg-green-700 text-white p-2 rounded-md hover:bg-green-800 transition duration-200"
                     >
-                        Send OTP
+                        Verify OTP
                     </button>
                 </form>
                 {message && <p className="text-green-500 text-center mt-4">{message}</p>}
@@ -51,4 +55,4 @@ const ForgotPass = () => {
     );
 };
 
-export default ForgotPass;
+export default OtpVerification;
