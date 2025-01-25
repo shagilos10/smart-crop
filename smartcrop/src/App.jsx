@@ -11,6 +11,8 @@ import FarmerCrud from './pages/FarmerCrud'
 import Croprecommendation from './pages/Croprecommendation'
 import Mycrops from './pages/Mycrops'
 import Tasks from './pages/Tasks'
+import Reports from './pages/Reports'
+import Weather from './pages/Weather'
 import Sidebar from './components/Sidebar'
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
@@ -36,6 +38,8 @@ function App() {
                         <Route path="/croprecommendation" element={<Croprecommendation />} />
                         <Route path="/mycrops" element={<Mycrops />} />
                         <Route path="/tasks" element={<Tasks />} />
+                        <Route path="/weather" element={<Weather />} />
+                        <Route path="/reports" element={<Reports />} />
 
                     </Routes>
                 </div>
