@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');  
 const cookieParser = require('cookie-parser');
 const discritAdminRoutes = require('./routes/districtAdminRoutes');
+const cityAdminRoutes = require('./routes/cityAdminRoutes');
 
 const app = express();
 
@@ -16,7 +17,9 @@ app.use(cookieParser());
 app.use(morgan('dev'));  
 
 // Routes
-app.use('/api/admin', discritAdminRoutes);  
+app.use('/api/dadmin', discritAdminRoutes);  
+app.use('/api/cadmin', cityAdminRoutes);   
+
 
  app.use((req, res, next) => {
   const error = new Error('Not Found');
