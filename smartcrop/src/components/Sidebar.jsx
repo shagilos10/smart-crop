@@ -7,10 +7,11 @@ import wheat from '/src/assets/images/Wheat.png'
 import report from '/src/assets/images/Bar Chart.png'
 
 
+
 const Sidebar = () => {
   return (
     <div>
-        <div className='bg-green-700 w-64 h-screen text-white p-4 flex justify-center items-center '>
+        <div className='bg-green-700 w-74 h-screen text-white p-4 flex justify-center items-center '>
             <ul className='space-y-8'>
                 <li className='flex gap-1 items-center'>
                     <img className='w-8' src={wheat} alt="" />

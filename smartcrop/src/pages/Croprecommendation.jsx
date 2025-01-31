@@ -2,7 +2,8 @@ import React from 'react'
 
 const Croprecommendation = () => {
   return (
-    <div>
+    <div className='text-black text-center'>
+      crops
       
     </div>
   )
