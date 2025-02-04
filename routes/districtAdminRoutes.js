@@ -9,19 +9,19 @@ router.post('/login', loginDistrictAdmin);
 // Add Soil Data Route
 router.post('/soil/add', verifyToken, verifyDistrictAdmin, addSoilData);
 
-// Create a new farmer
-router.post('/', verifyToken, verifyDistrictAdmin, createFarmer);
+// tested
+router.post('/create-Farmer', /*verifyToken, verifyDistrictAdmin,*/ createFarmer);
 
+//tested
+router.get('/district/:districtId', /*verifyToken, verifyDistrictAdmin, */getFarmersByDistrict);
 
-router.get('/district/:districtId', verifyToken, verifyDistrictAdmin, getFarmersByDistrict);
-
-
-router.get('/farmer/:id', verifyToken, getSingleFarmer);
+// tested
+router.get('/farmer/:id', /*verifyToken,*/ getSingleFarmer);
 
 // Update a farmer
 router.put('/:id', verifyToken, verifyDistrictAdmin, updateFarmer);
 
-// Delete a farmer
-router.delete('/:id', verifyToken, verifyDistrictAdmin, deleteFarmer);
+//tested
+router.delete('/farmer/:id', /*verifyToken, verifyDistrictAdmin, */deleteFarmer);
 
 module.exports = router;

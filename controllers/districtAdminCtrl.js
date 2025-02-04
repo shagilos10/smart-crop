@@ -4,46 +4,56 @@ const jwt = require('jsonwebtoken');
 const Soil = require('../models/soil');
 const Farmer = require('../models/farmer');
 const District = require('../models/district');
+const mongoose = require('mongoose');
 
 // Create a new farmer
+
 exports.createFarmer = async (req, res) => {
-    const { username, email, password, district, farmArea } = req.body;
-  
-    try {
-      // Check if the district exists
-      const existingDistrict = await District.findById(district);
-      if (!existingDistrict) {
-        return res.status(404).json({ message: 'District not found.' });
-      }
-  
-      // Ensure farmArea contains only areaSize without soil info
-      const formattedFarmArea = farmArea.map((area) => ({
-        areaSize: area.areaSize, // Only areaSize is allowed
-      }));
-  
-      // Create a new farmer
-      const newFarmer = new Farmer({
-        username,
-        email,
-        password,
-        district,
-        farmArea: formattedFarmArea,
-      });
-  
-      // Save the farmer and update the district
-      const savedFarmer = await newFarmer.save();
-      existingDistrict.farmers.push(savedFarmer._id);
-      await existingDistrict.save();
-  
-      res.status(201).json({
-        message: 'Farmer created successfully.',
-        farmer: savedFarmer,
-      });
-    } catch (error) {
-      console.error('Error creating farmer:', error.message);
-      res.status(500).json({ message: 'Internal server error.' });
+  const { username, email, password, districtId, farmArea } = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(districtId)) {
+      console.log(typeof districtId)
+      return res.status(400).json({ message: 'Invalid district ID format.' });
     }
-  };
+
+    const existingDistrict = await District.findById(districtId);
+    if (!existingDistrict) {
+      return res.status(404).json({ message: 'District not found.' });
+    }
+
+    const existingFarmer = await Farmer.findOne({ email });
+    if (existingFarmer) {
+      return res.status(400).json({ message: 'Email is already in use. Please use a different email.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const formattedFarmArea = farmArea.map((area) => ({
+      areaSize: area.areaSize,
+    }));
+
+    const newFarmer = new Farmer({
+      username,
+      email,
+      password: hashedPassword,
+      districtId: new mongoose.Types.ObjectId(districtId), // ✅ Correct
+      farmArea: formattedFarmArea,
+    });
+
+    const savedFarmer = await newFarmer.save();
+    existingDistrict.farmers.push(savedFarmer._id);
+    await existingDistrict.save();
+
+    res.status(201).json({
+      message: 'Farmer created successfully.',
+      farmer: savedFarmer,
+    });
+  } catch (error) {
+    console.error('Error creating farmer:', error.message);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+};
 
 // Get all farmers or a specific farmer
 exports.getSingleFarmer = async (req, res) => {
@@ -93,20 +103,23 @@ exports.deleteFarmer = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Find and delete the farmer
-    const deletedFarmer = await Farmer.findByIdAndDelete(id);
-    if (!deletedFarmer) {
+    // Find the farmer first to get its district
+    const farmer = await Farmer.findById(id);
+    if (!farmer) {
       return res.status(404).json({ message: 'Farmer not found.' });
     }
 
     // Remove the farmer from the district's farmers array
-    const district = await District.findById(deletedFarmer.district);
+    const district = await District.findById(farmer.district);
     if (district) {
       district.farmers = district.farmers.filter(
         (farmerId) => farmerId.toString() !== id
       );
       await district.save();
     }
+
+    // Now delete the farmer after handling the district update
+    await Farmer.findByIdAndDelete(id);
 
     res.status(200).json({ message: 'Farmer deleted successfully.' });
   } catch (error) {
