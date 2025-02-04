@@ -18,10 +18,10 @@ router.get('/district/:districtId', /*verifyToken, verifyDistrictAdmin, */getFar
 // tested
 router.get('/farmer/:id', /*verifyToken,*/ getSingleFarmer);
 
-// Update a farmer
-router.put('/:id', verifyToken, verifyDistrictAdmin, updateFarmer);
+// tested
+router.put('/farmer/:id', /*verifyToken, verifyDistrictAdmin, */updateFarmer);
 
-//tested
+// tested
 router.delete('/farmer/:id', /*verifyToken, verifyDistrictAdmin, */deleteFarmer);
 
 module.exports = router;

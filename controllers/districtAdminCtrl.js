@@ -77,12 +77,34 @@ exports.getSingleFarmer = async (req, res) => {
 // Update a farmer
 exports.updateFarmer = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  let updates = { ...req.body }; // Copy request body
 
   try {
+    // ✅ Validate ID format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid farmer ID format.' });
+    }
+
+    // ✅ Prevent empty updates
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No update data provided.' });
+    }
+
+    // ✅ Hash password if included in update request
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    // ✅ Prevent updating certain fields (security)
+    delete updates._id;
+    delete updates.email; // Avoid changing email (optional)
+    delete updates.createdAt;
+
+    // ✅ Perform update with validation
     const updatedFarmer = await Farmer.findByIdAndUpdate(id, updates, {
       new: true,
-    }).populate('district');
+      runValidators: true, // Ensures validation rules are applied
+    }).populate('districtId');
 
     if (!updatedFarmer) {
       return res.status(404).json({ message: 'Farmer not found.' });
@@ -94,7 +116,7 @@ exports.updateFarmer = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating farmer:', error.message);
-    res.status(500).json({ message: 'Internal server error.' });
+    res.status(500).json({ message: 'Internal server error.', error: error.message });
   }
 };
 
