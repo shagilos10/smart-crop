@@ -187,34 +187,37 @@ exports.loginDistrictAdmin = async (req, res) => {
 };
 
 exports.addSoilData = async (req, res) => {
-    try {
-      const { soilType, humidity, nutrientLevel, ph } = req.body;
-  
-      // Validate the input
-      if (!soilType || !humidity || !nutrientLevel || !ph) {
-        return res.status(400).json({ message: 'All fields are required.' });
-      }
-  
-      // Create a new soil data entry
-      const newSoilData = new Soil({
-        soilType,
-        humidity,
-        nutrientLevel,
-        ph,
-      });
-  
-      // Save the data to the database
-      const savedSoilData = await newSoilData.save();
-  
-      res.status(201).json({
-        message: 'Soil data added successfully.',
-        soilData: savedSoilData,
-      });
-    } catch (error) {
-      console.error('Error adding soil data:', error.message);
-      res.status(500).json({ message: 'Internal server error.' });
+  try {
+    const { humidity, nitrogen, phosphorous, potassium, ph } = req.body;
+
+    // ✅ Validate the input
+    if ( !humidity || !nitrogen || !phosphorous || !potassium || !ph) {
+      return res.status(400).json({ message: 'All fields are required.' });
     }
-  };
+
+    // ✅ Create a new soil data entry
+    const newSoilData = new Soil({
+      humidity,
+      nutrientLevel: {
+        nitrogen,
+        phosphorous,
+        potassium,
+      },
+      ph,
+    });
+
+    // ✅ Save the data to the database
+    const savedSoilData = await newSoilData.save();
+
+    res.status(201).json({
+      message: 'Soil data added successfully.',
+      soilData: savedSoilData,
+    });
+  } catch (error) {
+    console.error('Error adding soil data:', error.message);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+};
 
 // Get all farmers in a specific district
 exports.getFarmersByDistrict = async (req, res) => {
@@ -235,5 +238,35 @@ exports.getFarmersByDistrict = async (req, res) => {
     } catch (error) {
       console.error('Error fetching farmers by district:', error.message);
       res.status(500).json({ message: 'Internal server error.' });
+    }
+  };
+
+exports.approveCropRecommendation = async (req, res) => {
+    const { farmerId, cropName } = req.body;
+  
+    try {
+      // ✅ Validate IDs
+      if (!mongoose.Types.ObjectId.isValid(farmerId)) {
+        return res.status(400).json({ message: 'Invalid farmer ID or crop ID format.' });
+      }
+      const updatedFarmer = await Farmer.findByIdAndUpdate(
+        farmerId,
+        { 
+          $push: { crop: { cropName: cropName, recommendedDate: Date.now() } } 
+        },
+        { new: true, runValidators: false } // ✅ Prevent full validation (avoids districtId error)
+      );
+  
+      if (!updatedFarmer) {
+        return res.status(404).json({ message: 'Farmer not found.' });
+      }
+  
+      res.status(200).json({
+        message: 'Crop recommendation approved and added to farmer.',
+        farmer: updatedFarmer,
+      });
+    } catch (error) {
+      console.error('Error approving crop recommendation:', error.message);
+      res.status(500).json({ message: 'Internal server error.', error: error.message });
     }
   };

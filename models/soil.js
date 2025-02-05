@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const soilSchema = new mongoose.Schema({
-  soilType: { type: String, required: true }, // e.g., Loam, Sandy
+  // soilType: { type: String, required: true }, // e.g., Loam, Sandy
   humidity: { type: Number, required: true }, // in percentage
   nutrientLevel: {
     nitrogen: { type: Number, required: true }, // in ppm (parts per million)

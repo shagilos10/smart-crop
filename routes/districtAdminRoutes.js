@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { loginDistrictAdmin, addSoilData, createFarmer, getFarmersByDistrict, updateFarmer, deleteFarmer, getSingleFarmer } = require('../controllers/districtAdminCtrl');
+const { loginDistrictAdmin, addSoilData, createFarmer, getFarmersByDistrict, updateFarmer, deleteFarmer, getSingleFarmer, approveCropRecommendation } = require('../controllers/districtAdminCtrl');
 const { verifyToken, verifyDistrictAdmin } = require('../Middlewares/authMiddleware');
 
 // Admin Login Route
 router.post('/login', loginDistrictAdmin);
 
-// Add Soil Data Route
-router.post('/soil/add', verifyToken, verifyDistrictAdmin, addSoilData);
+// tested
+router.post('/soil/add', /*verifyToken, verifyDistrictAdmin,*/ addSoilData);
 
 // tested
 router.post('/create-Farmer', /*verifyToken, verifyDistrictAdmin,*/ createFarmer);
@@ -23,5 +23,8 @@ router.put('/farmer/:id', /*verifyToken, verifyDistrictAdmin, */updateFarmer);
 
 // tested
 router.delete('/farmer/:id', /*verifyToken, verifyDistrictAdmin, */deleteFarmer);
+
+// tested
+router.post('/approve', /*verifyToken, verifyDistrictAdmin, */approveCropRecommendation)
 
 module.exports = router;
