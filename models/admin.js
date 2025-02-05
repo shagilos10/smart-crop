@@ -8,13 +8,13 @@ const adminSchema = new mongoose.Schema({
   district: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'District', 
-    required: function() { return this.role === 'District'; }, // Only required if role is District
+    required: function() { return this.role === 'District'; }, 
     default: null 
   },
   city: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'City', 
-    required: function() { return this.role === 'City'; }, // Only required if role is City
+    required: function() { return this.role === 'City'; }, 
     default: null
   },
   createdAt: { type: Date, default: Date.now },

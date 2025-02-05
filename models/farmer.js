@@ -21,4 +21,6 @@ const farmerSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+farmerSchema.index({ username: 1, districtId: 1 }, { unique: true });
+
 module.exports = mongoose.model('Farmer', farmerSchema);

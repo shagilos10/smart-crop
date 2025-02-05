@@ -9,4 +9,8 @@ const districtSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+districtSchema.index({ name: 1, city: 1 }, { unique: true }); 
+
 module.exports = mongoose.model('District', districtSchema);
+
+

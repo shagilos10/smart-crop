@@ -13,7 +13,7 @@ exports.verifyToken = (req, res, next) => {
 
   try {
     // Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, "daniel");
 
     // Attach the decoded payload to the request object
     req.user = decoded;
@@ -43,13 +43,22 @@ exports.verifyDistrictAdmin = async (req, res, next) => {
 // Middleware to ensure the user is a city admin
 exports.verifyCityAdmin = async (req, res, next) => {
   try {
-    const admin = await Admin.findById(req.user.id);
+    console.log(req.user)
+    if (!req.user || !req.user.adminId) {
+      return res.status(403).json({ message: 'Access denied. No user found in token.' });
+    }
 
-    if (!admin || admin.role !== 'City') {
+    const admin = await Admin.findById(req.user.adminId);
+
+    if (!admin) {
+      return res.status(403).json({ message: 'Access denied. Admin not found.' });
+    }
+
+    if (admin.role !== 'City') {
       return res.status(403).json({ message: 'Access denied. Not a city admin.' });
     }
 
-    next();
+    next(); // Proceed to the next middleware/controller
   } catch (error) {
     console.error('Error verifying city admin:', error.message);
     res.status(500).json({ message: 'Internal server error.' });

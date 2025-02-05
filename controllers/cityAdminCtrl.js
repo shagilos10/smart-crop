@@ -3,6 +3,7 @@ const Admin = require('../models/admin');
 const District = require('../models/district');
 const City = require('../models/city');
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 
 exports.registerDistrictAdmin = async (req, res) => {
   const { username, email, password, districtId } = req.body;
@@ -51,80 +52,68 @@ exports.registerDistrictAdmin = async (req, res) => {
 };
 
 exports.createDistrict = async (req, res) => {
-    const { name, location } = req.body;
-  
-    try {
-      // Ensure the user making the request is a city admin
-    //   const cityAdmin = await Admin.findById(req.user.id);
-    //   if (!cityAdmin || cityAdmin.role !== 'City') {
-    //     return res.status(403).json({ message: 'Access denied. Only city admins can create districts.' });
-    //   }
-  
-      // Check if a district with the same name already exists
-      const existingDistrict = await District.findOne({ name });
-      if (existingDistrict) {
-        return res.status(400).json({ message: 'District with this name already exists.' });
-      }
-  
-      // Create the new district
-      const newDistrict = new District({
-        name,
-        location,
-        // cityAdmin: cityAdmin._id,
-      });
-  
-      // Save the district to the database
-      const savedDistrict = await newDistrict.save();
-  
-      res.status(201).json({
-        message: 'District created successfully.',
-        district: savedDistrict,
-      });
-    } catch (error) {
-      console.error('Error creating district:', error.message);
-      res.status(500).json({ message: 'Internal server error.' });
-    }
-  };
+  const { name, location } = req.body;
 
+  const cityAdmin = req.user
+  const city = cityAdmin.city
+
+  try {
+    const newDistrict = new District({
+      name,
+      location,
+      city,
+    });
+
+    const savedDistrict = await newDistrict.save();
+    res.status(201).json(savedDistrict);
+  } catch (error) {
+    console.error('Error creating district:', error.message);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+ 
 exports.getAllDistrictAdmins = async (req, res) => {
-    const { cityId } = req.user; 
-  
-    try {
-      if (!mongoose.Types.ObjectId.isValid(cityId)) {
-        return res.status(400).json({ message: 'Invalid city ID format.' });
-      }
-  
-      const districts = await District.find({ city: cityId }).populate('districtAdmin', 'username email');
-  
-      const districtAdminIds = districts.map(d => d.districtAdmin?._id).filter(id => id);
-  
-      const districtAdmins = await Admin.find({ _id: { $in: districtAdminIds }, role: 'District' }).select('-password');
-  
-      const result = districtAdmins.map(admin => {
-        const assignedDistrict = districts.find(d => d.districtAdmin?._id.toString() === admin._id.toString());
-        return {
-          adminId: admin._id,
-          username: admin.username,
-          email: admin.email,
-          district: assignedDistrict
-            ? {
-                districtId: assignedDistrict._id,
-                name: assignedDistrict.name,
-                location: assignedDistrict.location
-              }
-            : null
-        };
-      });
-  
-      res.status(200).json({
-        message: 'District Admins retrieved successfully.',
-        districtAdmins: result,
-      });
-    } catch (error) {
-      console.error('Error fetching district admins:', error.message);
-      res.status(500).json({ message: 'Internal server error.', error: error.message });
+  try {
+    const { city } = req.user; // ✅ Extract city from logged-in admin
+
+    if (!mongoose.Types.ObjectId.isValid(city)) {
+      return res.status(400).json({ message: 'Invalid city ID format.' });
     }
-  };
+
+    // ✅ Fetch all districts in the admin's city & populate the districtAdmin field
+    const districts = await District.find({ city })
+      .populate({
+        path: 'districtAdmin',
+        select: 'username email' // Only fetch username & email, exclude password
+      });
+
+    if (!districts.length) {
+      return res.status(404).json({ message: 'No districts found in this city.' });
+    }
+
+    // ✅ Structure response mapping each district to its admin
+    const result = districts.map(district => ({
+      districtId: district._id,
+      name: district.name,
+      location: district.location,
+      admin: district.districtAdmin ? {
+        adminId: district.districtAdmin._id,
+        username: district.districtAdmin.username,
+        email: district.districtAdmin.email
+      } : null
+    }));
+
+    res.status(200).json({
+      message: 'Districts and their admins retrieved successfully.',
+      districts: result
+    });
+
+  } catch (error) {
+    console.error('Error fetching district admins:', error.message);
+    res.status(500).json({ message: 'Internal server error.', error: error.message });
+  }
+};
 
 exports.registerCityAdmin = async (req, res) => {
     try {
@@ -162,7 +151,6 @@ exports.registerCityAdmin = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   };
-
 
 exports.loginCityAdmin = async (req, res) => {
     try {
