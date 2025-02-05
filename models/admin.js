@@ -5,7 +5,18 @@ const adminSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['District', 'City'], default: 'District' },
-  district: { type: mongoose.Schema.Types.ObjectId, ref: 'District', default: null }, // Optional
+  district: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'District', 
+    required: function() { return this.role === 'District'; }, // Only required if role is District
+    default: null 
+  },
+  city: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'City', 
+    required: function() { return this.role === 'City'; }, // Only required if role is City
+    default: null
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
