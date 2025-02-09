@@ -29,7 +29,11 @@ exports.verifyDistrictAdmin = async (req, res, next) => {
   try {
     const admin = await Admin.findById(req.user.id);
 
-    if (!admin || admin.role !== 'District') {
+    if (!admin) {
+      return res.status(403).json({ message: 'Access denied. Admin not found.' });
+    }
+
+    if (admin.role !== 'District') {
       return res.status(403).json({ message: 'Access denied. Not a district admin.' });
     }
 

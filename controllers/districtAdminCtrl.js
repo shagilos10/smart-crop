@@ -7,14 +7,13 @@ const District = require('../models/district');
 const mongoose = require('mongoose');
 
 // Create a new farmer
-
 exports.createFarmer = async (req, res) => {
-  const { username, email, password, districtId, farmArea } = req.body;
+  const { username, email, password, farmArea } = req.body;
+  const districtId = req.user?.districtId; // Take districtId from logged-in admin
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(districtId)) {
-      console.log(typeof districtId)
-      return res.status(400).json({ message: 'Invalid district ID format.' });
+    if (!districtId || !mongoose.Types.ObjectId.isValid(districtId)) {
+      return res.status(400).json({ message: 'Invalid district ID format or missing district ID.' });
     }
 
     const existingDistrict = await District.findById(districtId);
@@ -37,7 +36,7 @@ exports.createFarmer = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      districtId: new mongoose.Types.ObjectId(districtId), // ✅ Correct
+      districtId: new mongoose.Types.ObjectId(districtId),
       farmArea: formattedFarmArea,
     });
 
@@ -54,6 +53,7 @@ exports.createFarmer = async (req, res) => {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 
 // Get all farmers or a specific farmer
 exports.getSingleFarmer = async (req, res) => {
