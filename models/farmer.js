@@ -7,6 +7,7 @@ const farmerSchema = new mongoose.Schema({
   districtId: { type: mongoose.Schema.Types.ObjectId, ref: 'District', required: true }, 
   farmArea: [
     {
+      farmFieldId: { type: String, required: true }, // New field for identifying each farm plot
       soil: { type: mongoose.Schema.Types.ObjectId, ref: 'Soil', default: null }, 
       areaSize: { type: Number, required: true } 
     }

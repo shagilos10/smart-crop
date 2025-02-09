@@ -9,6 +9,7 @@ const soilSchema = new mongoose.Schema({
     potassium: { type: Number, required: true }, // in ppm
   },
   ph: { type: Number, required: true }, // Soil pH level (e.g., 6.5)
+  addedDate: { type: Date, default: Date.now } // When the crop was recommended
 });
 
 module.exports = mongoose.model('Soil', soilSchema);

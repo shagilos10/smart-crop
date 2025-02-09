@@ -27,7 +27,7 @@ exports.verifyToken = (req, res, next) => {
 // Middleware to ensure the user is a district admin
 exports.verifyDistrictAdmin = async (req, res, next) => {
   try {
-    const admin = await Admin.findById(req.user.id);
+    const admin = await Admin.findById(req.user.id).populate('district');
 
     if (!admin) {
       return res.status(403).json({ message: 'Access denied. Admin not found.' });
@@ -37,12 +37,23 @@ exports.verifyDistrictAdmin = async (req, res, next) => {
       return res.status(403).json({ message: 'Access denied. Not a district admin.' });
     }
 
+    // Attach districtId to req.admin
+    req.admin = {
+      id: admin._id,
+      districtId: admin.district ? admin.district._id : null, // Ensure district exists
+    };
+
+    if (!req.admin.districtId) {
+      return res.status(400).json({ message: "Admin is not assigned to any district." });
+    }
+
     next();
   } catch (error) {
     console.error('Error verifying district admin:', error.message);
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 
 // Middleware to ensure the user is a city admin
 exports.verifyCityAdmin = async (req, res, next) => {
@@ -68,3 +79,4 @@ exports.verifyCityAdmin = async (req, res, next) => {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
