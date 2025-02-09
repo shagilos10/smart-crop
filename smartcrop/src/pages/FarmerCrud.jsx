@@ -108,7 +108,7 @@ const FarmerCrud = () => {
                 <input
                     type="text"
                     value={district}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={(e) => setDistrict(e.target.value)}
                     placeholder="Enter District"
                     className="border border-gray-300 p-2 rounded mr-2"
                     required

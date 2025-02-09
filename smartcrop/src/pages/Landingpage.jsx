@@ -48,7 +48,7 @@ const Landingpage = () => {
     }, []);
 
     function HandleClick(){
-        navigate('/dashboard');
+        navigate('/croprecommendation');
     }
 
     return (

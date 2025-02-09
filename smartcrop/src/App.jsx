@@ -43,8 +43,8 @@ function App() {
 
                 {/* Routes with Sidebar */}
                 <Route element={<LayoutWithSidebar />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
 
+                <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/croprecommendation" element={<Croprecommendation />} />
                     <Route path="/mycrops" element={<Mycrops />} />
                     <Route path="/weather" element={<Weather />} />
