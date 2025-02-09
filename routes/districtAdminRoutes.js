@@ -3,14 +3,14 @@ const router = express.Router();
 const { loginDistrictAdmin, addSoilData, createFarmer, getFarmersByDistrict, updateFarmer, deleteFarmer, getSingleFarmer, approveCropRecommendation } = require('../controllers/districtAdminCtrl');
 const { verifyToken, verifyDistrictAdmin } = require('../Middlewares/authMiddleware');
 
-// Admin Login Route
+// tested
 router.post('/login', loginDistrictAdmin);
 
 // tested
-router.post('/soil/add', /*verifyToken, verifyDistrictAdmin,*/ addSoilData);
+router.post('/soil/add', verifyToken, verifyDistrictAdmin, addSoilData);
 
 // tested
-router.post('/create-Farmer', /*verifyToken, verifyDistrictAdmin,*/ createFarmer);
+router.post('/create-Farmer', verifyToken, verifyDistrictAdmin, createFarmer);
 
 //tested
 router.get('/district/:districtId', /*verifyToken, verifyDistrictAdmin, */getFarmersByDistrict);
