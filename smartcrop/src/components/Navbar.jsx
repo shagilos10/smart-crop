@@ -4,7 +4,7 @@ import g16 from '../assets/images/g16.svg'
 
 const Navbar = () => {
   return (
-    <nav className="bg-white p-4 w-screen">
+    <nav className="fixed bg-white p-4 w-screen ">
       <div className="container mx-auto flex justify-between items-center">
         <div className='flex items-center'>
           <div><img className='h-10 w-auto' src={g16} alt="" /></div>
@@ -15,11 +15,6 @@ const Navbar = () => {
           <li>
             <Link to="/profile" className="hover:text-green-300">
               Profile
-            </Link>
-          </li>
-          <li>
-            <Link to="/settings" className="hover:text-green-300">
-              Settings
             </Link>
           </li>
           <li>

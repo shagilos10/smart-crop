@@ -1,17 +1,19 @@
 // src/components/Farmers.js
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const FarmerCrud = () => {
     const [farmers, setFarmers] = useState([]);
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
-    const [location,setLocation]=useState('')
+    const [district,setDistrict]=useState('')
     const [admissionDate, setAdmissionDate] = useState('');
     const [editIndex, setEditIndex] = useState(null);
     const [currentId, setCurrentId] = useState(null); // To track the ID of the farmer being edited
 
     const apiUrl = 'http://localhost:5000/api/farmers'; // Replace with your actual backend URL
+    const navigate=useNavigate()
 
     // Fetch farmers from the backend on component mount
     useEffect(() => {
@@ -28,7 +30,7 @@ const FarmerCrud = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const farmerData = { name, phone, admissionDate,Location };
+        const farmerData = { name, phone, admissionDate,district };
 
         if (editIndex !== null) {
             // Update existing farmer
@@ -57,14 +59,14 @@ const FarmerCrud = () => {
         setName('');
         setPhone('');
         setAdmissionDate('');
-        setLocation('')
+        setDistrict('')
     };
 
     const handleEdit = (index) => {
         setName(farmers[index].name);
         setPhone(farmers[index].phone);
         setAdmissionDate(farmers[index].admissionDate);
-        setLocation(farmers[index].Location);
+        setDistrict(farmers[index].district);
         setEditIndex(index);
         setCurrentId(farmers[index]._id); // Set the ID for editing
     };
@@ -78,6 +80,10 @@ const FarmerCrud = () => {
             console.error("Error deleting farmer:", error);
         }
     };
+    const HandleView=(farmerId)=>{
+        navigate(`/dashboard/${farmerId}`)
+
+    }
 
     return (
         <div className="p-6">
@@ -101,9 +107,9 @@ const FarmerCrud = () => {
                 />
                 <input
                     type="text"
-                    value={location}
+                    value={district}
                     onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Enter Location"
+                    placeholder="Enter District"
                     className="border border-gray-300 p-2 rounded mr-2"
                     required
                 />
@@ -121,7 +127,8 @@ const FarmerCrud = () => {
             <ul>
                 {farmers.map((farmer, index) => (
                     <li key={farmer._id} className="flex justify-between items-center mb-2">
-                        <span>{farmer.name} - {farmer.phone} -{farmer.Location} - {farmer.admissionDate}</span>
+                        <span onClick={() => HandleView(farmer._id)} className="cursor-pointer text-blue-600 hover:underline"
+                            >{farmer.name} - {farmer.phone} -{farmer.district} - {farmer.admissionDate}</span>
                         <div>
                             <button
                                 onClick={() => handleEdit(index)}
