@@ -13,7 +13,7 @@ exports.verifyToken = (req, res, next) => {
 
   try {
     // Verify the token
-    const decoded = jwt.verify(token, "daniel");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Attach the decoded payload to the request object
     req.user = decoded;

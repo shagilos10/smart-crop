@@ -173,7 +173,7 @@ exports.loginCityAdmin = async (req, res) => {
   
       const token = jwt.sign(
         { adminId: admin._id, role: admin.role, city: admin.city },
-        "daniel",
+        process.env.JWT_SECRET,
         { expiresIn: '7d' } // Token valid for 7 days
       );
   
