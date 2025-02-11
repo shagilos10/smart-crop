@@ -77,7 +77,7 @@ const Landingpage = () => {
                     </button>
                 </div>
                 <div className='p-4 px-12'>
-                    <div className='flex flex-col md:flex-row justify-between py-4'>
+                    <div className='flex flex-col md:flex-row justify-between py-4 gap-3'>
                         <img src={image1} alt="" data-aos="zoom-in" className="w-full md:w-1/2" />
                         <img src={image2} alt="" data-aos="zoom-in" className="w-full md:w-1/2" />
                     </div>
