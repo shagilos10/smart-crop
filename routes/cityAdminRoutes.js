@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerDistrictAdmin, createDistrict, getAllDistrictAdmins, registerCityAdmin,  loginCityAdmin } = require('../controllers/cityAdminCtrl');
+const { registerDistrictAdmin, createDistrict, getAllDistrictAdmins, registerCityAdmin,  loginCityAdmin, createNews } = require('../controllers/cityAdminCtrl');
 const { verifyToken, verifyCityAdmin } = require('../Middlewares/authMiddleware');
 
 // tested
@@ -16,5 +16,8 @@ router.post('/register', registerCityAdmin)
 
 //tested
 router.post('/login', loginCityAdmin)
+
+//tested
+router.post('/add', verifyToken, verifyCityAdmin, createNews);
 
 module.exports = router;

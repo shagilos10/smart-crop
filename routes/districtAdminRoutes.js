@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { loginDistrictAdmin, addSoilData, createFarmer, getFarmersByDistrict, updateFarmer, deleteFarmer, getSingleFarmer, approveCropRecommendation, getCropRecommendationsByYear, getWeatherData } = require('../controllers/districtAdminCtrl');
+const { loginDistrictAdmin, addSoilData, createFarmer, getFarmersByDistrict, updateFarmer, deleteFarmer, getSingleFarmer, approveCropRecommendation, getCropRecommendationsByYear, getWeatherData, getNewsForDistrictAdmin } = require('../controllers/districtAdminCtrl');
 const { verifyToken, verifyDistrictAdmin } = require('../Middlewares/authMiddleware');
 
 // tested
@@ -32,6 +32,9 @@ router.get('/getCropsAnalytics/:farmerId', verifyToken, verifyDistrictAdmin, get
 
 
 router.get('/weather', verifyToken, verifyDistrictAdmin, getWeatherData)
+
+//tested
+router.get('/news', verifyToken, verifyDistrictAdmin, getNewsForDistrictAdmin)
 
 
 module.exports = router;

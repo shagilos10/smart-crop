@@ -5,6 +5,8 @@ const Soil = require('../models/soil');
 const Farmer = require('../models/farmer');
 const District = require('../models/district');
 const mongoose = require('mongoose');
+const City = require('../models/city');
+const News = require('../models/news');
 
 // Create a new farmer
 exports.createFarmer = async (req, res) => {
@@ -175,7 +177,7 @@ exports.loginDistrictAdmin = async (req, res) => {
 
     const token = jwt.sign(
       { id: admin._id, role: admin.role },
-      process.env.JWT_SECRET, 
+      "daniel",
       { expiresIn: '1d' } 
     );
 
@@ -390,5 +392,30 @@ exports.getWeatherData = async (req, res) => {
       message: "Internal server error.",
       error: error.response?.data || error.message,
     });
+  }
+};
+
+
+exports.getNewsForDistrictAdmin = async (req, res) => {
+  try {
+    console.log('Decoded Token Data:', req.user); // ✅ Debugging: See token data
+
+    const {  role, city } = req.user; // ✅ Extract directly from `req.user`
+
+    // ✅ Ensure only District Admins can access this
+    if (role !== 'District') {
+      return res.status(403).json({ message: 'Access denied. Not a district admin.' });
+    }
+
+    // ✅ Fetch news related to the district admin's city
+    const news = await News.find({ city }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: 'News fetched successfully.',
+      news,
+    });
+  } catch (error) {
+    console.error('Error fetching news:', error.message);
+    res.status(500).json({ message: 'Internal server error.', error: error.message });
   }
 };

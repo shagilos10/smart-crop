@@ -27,7 +27,11 @@ exports.verifyToken = (req, res, next) => {
 // Middleware to ensure the user is a district admin
 exports.verifyDistrictAdmin = async (req, res, next) => {
   try {
+    console.log(req.user)
     const admin = await Admin.findById(req.user.id).populate('district');
+    console.log("adminId", req.user.id)
+
+    console.log("admin", admin)
 
     if (!admin) {
       return res.status(403).json({ message: 'Access denied. Admin not found.' });
@@ -54,11 +58,10 @@ exports.verifyDistrictAdmin = async (req, res, next) => {
   }
 };
 
-
 // Middleware to ensure the user is a city admin
 exports.verifyCityAdmin = async (req, res, next) => {
   try {
-    console.log(req.user)
+    console.log(req.user.adminId)
     if (!req.user || !req.user.adminId) {
       return res.status(403).json({ message: 'Access denied. No user found in token.' });
     }
