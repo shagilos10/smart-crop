@@ -9,6 +9,7 @@ router.post('/register-district-admin', verifyToken, verifyCityAdmin, registerDi
 //tested
 router.post('/create-District', verifyToken, verifyCityAdmin, createDistrict);
 
+
 router.get('/all', verifyToken, verifyCityAdmin, getAllDistrictAdmins);
 
 //tested
