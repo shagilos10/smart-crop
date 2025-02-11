@@ -13,7 +13,7 @@ exports.verifyToken = (req, res, next) => {
 
   try {
     // Verify the token
-    const decoded = jwt.verify(token, "daniel");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Attach the decoded payload to the request object
     req.user = decoded;
@@ -27,7 +27,11 @@ exports.verifyToken = (req, res, next) => {
 // Middleware to ensure the user is a district admin
 exports.verifyDistrictAdmin = async (req, res, next) => {
   try {
-    const admin = await Admin.findById(req.user.id);
+    console.log(req.user)
+    const admin = await Admin.findById(req.user.id).populate('district');
+    console.log("adminId", req.user.id)
+
+    console.log("admin", admin)
 
     if (!admin) {
       return res.status(403).json({ message: 'Access denied. Admin not found.' });
@@ -35,6 +39,16 @@ exports.verifyDistrictAdmin = async (req, res, next) => {
 
     if (admin.role !== 'District') {
       return res.status(403).json({ message: 'Access denied. Not a district admin.' });
+    }
+
+    // Attach districtId to req.admin
+    req.admin = {
+      id: admin._id,
+      districtId: admin.district ? admin.district._id : null, // Ensure district exists
+    };
+
+    if (!req.admin.districtId) {
+      return res.status(400).json({ message: "Admin is not assigned to any district." });
     }
 
     next();
@@ -47,7 +61,7 @@ exports.verifyDistrictAdmin = async (req, res, next) => {
 // Middleware to ensure the user is a city admin
 exports.verifyCityAdmin = async (req, res, next) => {
   try {
-    console.log(req.user)
+    console.log(req.user.adminId)
     if (!req.user || !req.user.adminId) {
       return res.status(403).json({ message: 'Access denied. No user found in token.' });
     }
@@ -68,3 +82,4 @@ exports.verifyCityAdmin = async (req, res, next) => {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+

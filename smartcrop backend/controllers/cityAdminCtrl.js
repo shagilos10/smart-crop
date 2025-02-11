@@ -4,6 +4,7 @@ const District = require('../models/district');
 const City = require('../models/city');
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const News = require('../models/news')
 
 exports.registerDistrictAdmin = async (req, res) => {
   const { username, email, password, districtId } = req.body;
@@ -172,12 +173,50 @@ exports.loginCityAdmin = async (req, res) => {
   
       const token = jwt.sign(
         { adminId: admin._id, role: admin.role, city: admin.city },
-        "daniel",
+        process.env.JWT_SECRET,
         { expiresIn: '7d' } // Token valid for 7 days
       );
   
       res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
+    }
+  };
+
+  exports.createNews = async (req, res) => {
+    const { title, content } = req.body;
+    const cityId = req.admin?.city || req.user.city;
+    const userId = req.admin?.adminId || req.user.adminId;
+    console.log(cityId, userId);
+    
+    try {
+      if (!mongoose.Types.ObjectId.isValid(cityId)) {
+        return res.status(400).json({ message: 'Invalid city ID.' });
+      }
+  
+      // ✅ Check if the city exists
+      const city = await City.findById(cityId);
+      if (!city) {
+        return res.status(404).json({ message: 'City not found.' });
+      }
+  
+      // ✅ Create the news entry
+      const newNews = new News({
+        title,
+        content,
+        city: cityId,
+        createdBy: userId, // ✅ Ensure it's linked to the City Admin
+      });
+  
+      // ✅ Save news to the database
+      const savedNews = await newNews.save();
+  
+      res.status(201).json({
+        message: 'News added successfully.',
+        news: savedNews,
+      });
+    } catch (error) {
+      console.error('Error adding news:', error.message);
+      res.status(500).json({ message: 'Internal server error.', error: error.message });
     }
   };
