@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 //mongodb+srv://danialemayehu32:<db_password>@cluster0.kwgwl.mongodb.net/
 
 //const MONGODB_URI = 'mongodb+srv://danialemayehu32:1mI7pLFKEatYbZrq@cluster0.avg6l.mongodb.net/';
-const MONGODB_URI = 'mongodb+srv://danialemayehu32:nIXcgCYrjYw4vY7Z@cluster0.kwgwl.mongodb.net/';
+const MONGODB_URI = 'mongodb://localhost:27017/smartcrop';
 
 // Function to connect to the database
 const connectDB = async () => {

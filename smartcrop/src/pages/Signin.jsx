@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import logo from '/src/assets/images/g16.svg'
 import '../styles/styles.css'
-import {Link} from 'react-router-dom'
+import axios from 'axios'
+import {Link,useNavigate} from 'react-router-dom'
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const navigate=useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,9 +19,19 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    try {
+      const response = await axios.post('http://localhost:5000/api/cadmin/login', formData);
+      const token = response.data.token;
+      localStorage.setItem('token', token); // Store token in local storage
+      console.log('Login successful:', response.data);
+      // Redirect to login page after successful registration
+      navigate('/cityadmin'); // Use navigate for redirection
+    } catch (error) {
+      console.error('Error logging city admin:', error);
+      // Handle error (e.g., show error message)
+    }
   };
 
   return (
